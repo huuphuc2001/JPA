@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /identity
+
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/phuc"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+jwt:
+  signerKey: "EBCIEEitKzA3lLqTWHT3zLr0e3M2ZDZeo0l4VtMJXuFP9716dK/YNmDjJkam/yu4"
