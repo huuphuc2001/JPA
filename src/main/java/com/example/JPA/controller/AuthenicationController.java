@@ -1,5 +1,6 @@
 package com.example.JPA.controller;
 
+import com.example.JPA.dto.request.LogoutRequest;
 import com.example.JPA.dto.respone.ApiRespone;
 import com.example.JPA.dto.request.AuthenicationRequest;
 import com.example.JPA.dto.request.VerifyTokenRequest;
@@ -35,6 +36,14 @@ public class AuthenicationController {
         var result = service.verifyTokenRespone(request);
         return ApiRespone.<VerifyTokenRespone>builder()
                 .result(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiRespone<Void> logout(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
+       service.logout(request);
+        return ApiRespone.<Void>builder()
                 .build();
     }
 }

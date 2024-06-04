@@ -1,6 +1,7 @@
 package com.example.JPA.configuration;
 
 import com.example.JPA.enums.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,12 @@ import javax.crypto.spec.SecretKeySpec;
 //class cấu hình spring security
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {"/users",
-            "/auth/login", "/auth/verifytoken"
+            "/auth/login", "/auth/verifytoken","/auth/logout"
     };
-    @Value("${jwt.signerKey}")
-    private String signerKey;
+//    @Value("${jwt.signerKey}")
+//    private String signerKey;
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         //Phần 1
@@ -54,7 +57,7 @@ public class SecurityConfig {
         //phần này để sửa lại SCOPE_admin thành ROLE_admin
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder())
+                        jwtConfigurer.decoder(customJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         //khi authenication fail sẽ điều hướng user đi đến chổ mình muốn/ hoặc return error message
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
@@ -79,15 +82,15 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return  jwtAuthenticationConverter;
     }
-    @Bean
-    JwtDecoder jwtDecoder(){
-        //nimbus dùng để mã hoá token
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    }
+//    @Bean
+//    JwtDecoder jwtDecoder(){
+//        //nimbus dùng để mã hoá token
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+//        return NimbusJwtDecoder
+//                .withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512)
+//                .build();
+//    }
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);
